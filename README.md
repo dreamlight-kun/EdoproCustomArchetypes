@@ -7,6 +7,7 @@ It follows the naming way :<br>
   <li>NAME OF CARD : FR / EN</li>
   <li>DESC/EFFECT OF CARD : EN / FR</li>
 </ul>
+<br>
 ## CURRENT IMPLEMENTATION PROGRESS
 
 <ul>
