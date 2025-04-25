@@ -1,5 +1,6 @@
 # EdoproCustomArchetypes
 **EVERY CARD I MAKE HAS TEXT IN FRENCH AND ENGLISH !!**<br>
+## **I DO NOT OWN THE CARDS' ARTWORKS!**
 It follows the naming way :<br>
 <ul>
   <li>NAME OF CARD : FR / EN</li>
