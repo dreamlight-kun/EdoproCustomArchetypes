@@ -48,18 +48,32 @@ function s.activatenomon(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SpecialSummon(g,SUMMON_TYPE_SPECIAL,tp,tp,false,false,POS_FACEUP)
 	end
 end
+
+function s.bonfield(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.IsExistingMatchingCard(s.bfilter,tp,LOCATION_MZONE,0,1,nil)
+end
+function s.wonfield(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.IsExistingMatchingCard(s.wfilter,tp,LOCATION_MZONE,0,1,nil)
+end
+
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	local b1=s.nomon(e,tp,eg,ep,ev,re,r,rp,0)
-	local b2=s.drtg(e,tp,eg,ep,ev,re,r,rp,0)
-	local b3=s.tarban(e,tp,eg,ep,ev,re,r,rp,0)
-	if s.condnomon(e,tp,eg,ep,ev,re,r,rp)==0 then
+	local b2=s.drtg(e,tp,eg,ep,ev,re,r,rp,0) and s.wonfield(e,tp,eg,ep,ev,re,r,rp)
+	local b3=s.tarban(e,tp,eg,ep,ev,re,r,rp,0) and s.bonfield(e,tp,eg,ep,ev,re,r,rp)
+	local eta
+	if b1 then eta=0  
+	elseif b2 and not b3 then eta=1 
+	elseif not b2 and b3 then eta=2
+	elseif b2 and b3 then eta=3
+	if chk==0 then return eta end
+	end
+	if s.condnomon(e,tp,eg,ep,ev,re,r,rp)==0 and b1 and eta==0 then
 		e:SetCategory(CATEGORY_SPECIAL_SUMMON)
 		e:SetProperty(0)
 		e:SetOperation(s.activatenomon)
 		s.nomon(e,tp,eg,ep,ev,re,r,rp,1)
 	end
-	if chk==0 then return b1 or b2 or b3 end
-	if Duel.IsExistingMatchingCard(s.bfilter,tp,LOCATION_MZONE,0,1,nil) and Duel.IsExistingMatchingCard(s.wfilter,tp,LOCATION_MZONE,0,1,nil) then
+	if eta==3 then
 		local op=Duel.SelectEffect(tp,
 			{b2,aux.Stringid(id,0)},
 			{b3,aux.Stringid(id,1)})
@@ -74,12 +88,12 @@ function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 			e:SetOperation(s.ban)
 			s.tarban(e,tp,eg,ep,ev,re,r,rp,1)
 		end
-	elseif Duel.IsExistingMatchingCard(s.wfilter,tp,LOCATION_MZONE,0,1,1,nil) and not Duel.IsExistingMatchingCard(s.wfilter,tp,LOCATION_MZONE,0,1,nil)then
+	elseif eta=1 then
 		e:SetCategory(CATEGORY_DRAW)
 		e:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 		e:SetOperation(s.draw)
 		s.drtg(e,tp,eg,ep,ev,re,r,rp,1)
-	elseif not Duel.IsExistingMatchingCard(s.wfilter,tp,LOCATION_MZONE,0,1,1,nil) and Duel.IsExistingMatchingCard(s.bfilter,tp,LOCATION_MZONE,0,1,1,nil) then
+	elseif eta=2 then
 		e:SetCategory(CATEGORY_REMOVE)
 		e:SetProperty(0)
 		e:SetOperation(s.ban)
